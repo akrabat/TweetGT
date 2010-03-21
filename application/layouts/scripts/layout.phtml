@@ -1,0 +1,37 @@
+<?php 
+// set up information to be used in <head>
+$this->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8');
+$this->headMeta()->appendHttpEquiv('Content-Language', 'en-GB');
+$this->headTitle('TweetGT')->setSeparator(' - ');
+
+$baseUrl = $this->baseUrl();
+$this->headLink()->appendStylesheet($baseUrl.'/css/site.css', 'screen,print');
+//$this->headLink()->appendStylesheet$baseUrl.'/css/screen.css', 'screen');
+//$this->headLink()->appendStylesheet($baseUrl.'/css/print.css', 'print');
+//$this->headLink()->appendStylesheet($baseUrl.'/css/ie.css', 'print', 'IE');
+
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en" xml:lang="en"> 
+<head>  
+<?php echo $this->headMeta()->setIndent(4); ?> 
+<?php echo $this->headTitle()->setIndent(4);?> 
+<?php echo $this->headLink()->setIndent(4); ?> 
+<?php echo $this->headStyle()->setIndent(4); ?>
+<?php echo $this->headScript()->setIndent(4); ?> 
+</head>
+<body onload="initialize()">
+<div id="header">
+    <a href="<?php echo $this->url(array(), null, true); ?>" title="Link to homepage" name="top" id="brand">
+        TweetGT
+    </a> <span>Tweets: Geotagged</span>
+</div>
+<div id="content">
+    <?php echo $this->layout()->content; ?>
+</div>
+<div id="footer">
+<?php echo $this->footer(); ?>
+</div>
+<?php echo $this->googleAnalytics(); ?>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<?php if ($this->form) : ?>
+<h1><?php echo $this->escape($this->title); ?></h1>
+
+<?php 
+if ($this->messages) {
+   $messages = implode("<br />", $this->messages);
+   $class = "info";
+   if(strstr($messages, 'error')) {
+       $class = "error";
+   }
+   echo '<div class="'. $class.'">'.$messages. '</div>';
+}
+
+// Google map 
+$this->headMeta()->appendName("viewport", "initial-scale=0.8, user-scalable=yes");
+$this->headScript()->appendFile("http://maps.google.com/maps?file=api&v=2&key={$this->mapApiKey}&sensor=false");
+$this->headScript()->appendFile($this->baseUrl().'/js/map.js');
+?>
+<p>Drag the marker or click directly on the map to choose the location of your tweet.<br/>
+Double click to zoom.</p>
+<div id="map"></div>
+
+<?php echo $this->form; ?>
+
+<p id="loggedin">Logged in as <a target="_blank" href="http://www.twitter.com/<?php echo $this->escape($this->name); ?>"><?php echo $this->escape($this->name); ?></a>. <a href="<?php echo $this->url(array('action'=>'logout'));?>">Logout</a></p>
+
+<?php else : // Not logged in ?>
+<p>This application allows you to send geotagged tweets. 
+<br/>You must log into twitter first as TweetGT doesn't want to know your username or password!</p>
+<p><a href="<?php echo $this->url(array('action'=>'login'));?>"><img src="<?php echo $this->baseUrl() ?>/img/Sign-in-with-Twitter-darker.png" /></a></p>
+
+<?php endif;?>

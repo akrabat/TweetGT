@@ -1,0 +1,37 @@
+[production]
+analytics.apikey = ""
+twitter.consumerKey = ""
+twitter.consumerSecret = ""
+map.apikey = ""
+map.initial.latitude = 52.47811479909018
+map.initial.longitude = -1.898360252380371
+
+phpSettings.display_startup_errors = 0
+phpSettings.display_errors = 0
+includePaths.library = APPLICATION_PATH "/../library"
+bootstrap.path = APPLICATION_PATH "/Bootstrap.php"
+bootstrap.class = "Bootstrap"
+appnamespace = "Application"
+autoloadernamespaces[] = "App_"
+resources.frontController.controllerDirectory = APPLICATION_PATH "/controllers"
+resources.frontController.params.displayExceptions = 0
+resources.frontController.plugins.theme =  "App_Controller_Plugin_InitOAuth"
+resources.view.doctype = XHTML1_STRICT
+resources.view.helperPath.App_View_Helper_ = "App/View/Helper/"
+resources.layout.layoutPath = APPLICATION_PATH "/layouts/scripts/"
+resources.session.use_only_cookies = true
+resources.session.remember_me_seconds = 864000
+
+[staging : production]
+analytics.apikey = ""
+
+[testing : production]
+phpSettings.display_startup_errors = 1
+phpSettings.display_errors = 1
+analytics.apikey = ""
+
+[development : production]
+phpSettings.display_startup_errors = 1
+phpSettings.display_errors = 1
+resources.frontController.params.displayExceptions = 1
+analytics.apikey = ""

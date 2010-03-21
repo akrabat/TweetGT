@@ -1,0 +1,115 @@
+
+body {
+    font-family: Helvetica;
+    font-size: 12px;
+    margin: 0;
+    
+}
+
+#header {
+    padding: 10px 5px;
+    border-bottom: 1px solid #dfdfdf;
+    background-color: #DFE2FF;
+}
+#brand  {
+    color: #000;
+    font-size: 22px;
+    font-weight: normal;
+    text-decoration: none;
+    font-family: Trebuchet MS, Helvetica;
+    color: #00a;
+}
+
+#footer {
+    margin-top: 20px;
+    border-top: 1px solid #dfdfdf;
+    padding: 5px;
+    color: #666;
+    font-size: 11px;
+}
+#footer a {
+    color: #666;
+}
+
+#content {
+    padding: 0 5px;
+}
+
+a {
+    color: #00a;
+    text-decoration:none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+h1, h2, h3 {
+    font-weight: normal;
+    font-family: Trebuchet MS, Helvetica
+}
+h1 {
+    font-size: 16px;
+}
+h2 {
+    font-size: 14px;
+}
+h3 {
+    font-size: 12px;
+}
+
+form#sendtweet textarea {
+    height: 4em;
+    width: 30em;
+}
+
+form dl {
+	margin:0em;
+	margin-top:0.5em
+}
+form dt {
+	float:left;
+	clear:left;
+	width: 55px;
+	margin-top:0.4em;
+	color:#555;
+	text-left;
+	position:relative /*IEWin hack*/
+}
+form dd {
+	clear:right;
+	margin-left: 55px;
+	margin-bottom:0.8em;
+	padding-left:0.5em
+}
+
+form .errors {
+    margin: 3px 0 0 0;
+    padding: 0;
+    list-style-type: none;
+    color: #a00;
+}
+
+img {
+    border: none;
+}
+
+.error {
+    margin-top: 20px;
+    color: #a00;
+}
+
+.info {
+    margin-top: 20px;
+    color: #0a0;
+    font-size: 1.3em;
+}
+
+#map {
+    border: 1px solid #999;
+    width: 500px; 
+    height: 300px
+}
+
+#loggedin {
+    margin-top: 25px;
+}

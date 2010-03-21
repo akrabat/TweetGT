@@ -1,0 +1,8 @@
+TweetGT - Tweets: Geotagged 
+
+This is a simple Zend Framework project that allows you to post a geotagged tweet. A working
+implementation is available at http://tweetgt.funkymongoose.com.
+
+It uses Twitter's OAuth authentication system (via Zend_Oauth_Consumer) so that you
+don't need to give the application your login details.
+

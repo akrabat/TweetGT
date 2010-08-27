@@ -17,11 +17,8 @@
  * @subpackage Parse_Amf3
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Deserializer.php 21210 2010-02-27 10:37:39Z yoshida@zend.co.jp $
+ * @version    $Id: Deserializer.php 21969 2010-04-22 03:54:59Z matthew $
  */
-
-/** Zend_Amf_Constants */
-require_once 'Zend/Amf/Constants.php';
 
 /** Zend_Amf_Parse_Deserializer */
 require_once 'Zend/Amf/Parse/Deserializer.php';
@@ -397,13 +394,13 @@ class Zend_Amf_Parse_Amf3_Deserializer extends Zend_Amf_Parse_Deserializer
 
         }
 
-        if($returnObject instanceof Zend_Amf_Value_Messaging_ArrayCollection) {
-            if(isset($returnObject->externalizedData)) {
+       if ($returnObject instanceof Zend_Amf_Value_Messaging_ArrayCollection) {
+            if (isset($returnObject->externalizedData)) {
                 $returnObject = $returnObject->externalizedData;
             } else {
                 $returnObject = get_object_vars($returnObject);
             }
-        }
+       }
 
         return $returnObject;
     }

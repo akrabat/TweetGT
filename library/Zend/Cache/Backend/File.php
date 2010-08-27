@@ -17,7 +17,7 @@
  * @subpackage Zend_Cache_Backend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: File.php 21223 2010-02-28 02:53:51Z mabe $
+ * @version    $Id: File.php 21642 2010-03-25 17:07:02Z mabe $
  */
 
 /**
@@ -647,6 +647,7 @@ class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_B
         $prefix = $this->_options['file_name_prefix'];
         $glob = @glob($dir . $prefix . '--*');
         if ($glob === false) {
+            // On some systems it is impossible to distinguish between empty match and an error.
             return true;
         }
         foreach ($glob as $file)  {
@@ -739,7 +740,8 @@ class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_B
         $prefix = $this->_options['file_name_prefix'];
         $glob = @glob($dir . $prefix . '--*');
         if ($glob === false) {
-            return true;
+            // On some systems it is impossible to distinguish between empty match and an error.
+            return array();
         }
         foreach ($glob as $file)  {
             if (is_file($file)) {
@@ -802,7 +804,12 @@ class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_B
             }
             if ((is_dir($file)) and ($this->_options['hashed_directory_level']>0)) {
                 // Recursive call
-                $result = array_unique(array_merge($result, $this->_get($file . DIRECTORY_SEPARATOR, $mode, $tags)));
+                $recursiveRs =  $this->_get($file . DIRECTORY_SEPARATOR, $mode, $tags);
+                if ($recursiveRs === false) {
+                    $this->_log('Zend_Cache_Backend_File::_get() / recursive call : can\'t list entries of "'.$file.'"');
+                } else {
+                    $result = array_unique(array_merge($result, $recursiveRs));
+                }
             }
         }
         return array_unique($result);

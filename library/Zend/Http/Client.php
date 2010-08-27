@@ -16,7 +16,7 @@
  * @category   Zend
  * @package    Zend_Http
  * @subpackage Client
- * @version    $Id: Client.php 21020 2010-02-11 17:27:23Z shahar $
+ * @version    $Id: Client.php 22539 2010-07-08 12:47:44Z shahar $
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -585,9 +585,7 @@ class Zend_Http_Client
      */
     public function setCookieJar($cookiejar = true)
     {
-        if (! class_exists('Zend_Http_CookieJar')) {
-            require_once 'Zend/Http/CookieJar.php';
-        }
+        Zend_Loader::loadClass('Zend_Http_CookieJar');
 
         if ($cookiejar instanceof Zend_Http_CookieJar) {
             $this->cookiejar = $cookiejar;
@@ -625,9 +623,7 @@ class Zend_Http_Client
      */
     public function setCookie($cookie, $value = null)
     {
-        if (! class_exists('Zend_Http_Cookie')) {
-            require_once 'Zend/Http/Cookie.php';
-        }
+        Zend_Loader::loadClass('Zend_Http_Cookie');
 
         if (is_array($cookie)) {
             foreach ($cookie as $c => $v) {
@@ -839,15 +835,12 @@ class Zend_Http_Client
     public function setAdapter($adapter)
     {
         if (is_string($adapter)) {
-            if (!class_exists($adapter)) {
-                try {
-                    require_once 'Zend/Loader.php';
-                    Zend_Loader::loadClass($adapter);
-                } catch (Zend_Exception $e) {
-                    /** @see Zend_Http_Client_Exception */
-                    require_once 'Zend/Http/Client/Exception.php';
-                    throw new Zend_Http_Client_Exception("Unable to load adapter '$adapter': {$e->getMessage()}", 0, $e);
-                }
+            try {
+                Zend_Loader::loadClass($adapter);
+            } catch (Zend_Exception $e) {
+                /** @see Zend_Http_Client_Exception */
+                require_once 'Zend/Http/Client/Exception.php';
+                throw new Zend_Http_Client_Exception("Unable to load adapter '$adapter': {$e->getMessage()}", 0, $e);
             }
 
             $adapter = new $adapter;
@@ -910,16 +903,17 @@ class Zend_Http_Client
                  'Zend_Http_Client');
         }
 
-        $fp = fopen($this->_stream_name, "w+b");
-        if(!$fp) {
-                $this->close();
+        if (false === ($fp = @fopen($this->_stream_name, "w+b"))) {
+                if ($this->adapter instanceof Zend_Http_Client_Adapter_Interface) {
+                    $this->adapter->close();
+                }
                 require_once 'Zend/Http/Client/Exception.php';
-                throw new Zend_Http_Client_Exception("Could not open temp file $name");
-
+                throw new Zend_Http_Client_Exception("Could not open temp file {$this->_stream_name}");
         }
+        
         return $fp;
     }
-
+    
     /**
      * Send the HTTP request and return an HTTP response object
      *

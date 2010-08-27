@@ -16,7 +16,7 @@
  * @package    Zend_Feed_Writer
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Atom.php 20507 2010-01-21 22:21:07Z padraic $
+ * @version    $Id: Atom.php 22759 2010-08-01 19:26:34Z padraic $
  */
 
 /**
@@ -234,8 +234,12 @@ class Zend_Feed_Writer_Renderer_Entry_Atom
         }
         $enclosure = $this->_dom->createElement('link');
         $enclosure->setAttribute('rel', 'enclosure');
-        $enclosure->setAttribute('type', $data['type']);
-        $enclosure->setAttribute('length', $data['length']);
+        if (isset($data['type'])) {
+            $enclosure->setAttribute('type', $data['type']);
+        }
+        if (isset($data['length'])) {
+            $enclosure->setAttribute('length', $data['length']);
+        }
         $enclosure->setAttribute('href', $data['uri']);
         $root->appendChild($enclosure);
     }
@@ -282,7 +286,9 @@ class Zend_Feed_Writer_Renderer_Entry_Atom
                 $this->getDataContainer()->getLink());
         }
         if (!Zend_Uri::check($this->getDataContainer()->getId()) &&
-        !preg_match("#^urn:[a-zA-Z0-9][a-zA-Z0-9\-]{1,31}:([a-zA-Z0-9\(\)\+\,\.\:\=\@\;\$\_\!\*\-]|%[0-9a-fA-F]{2})*#", $this->getDataContainer()->getId())) {
+        !preg_match("#^urn:[a-zA-Z0-9][a-zA-Z0-9\-]{1,31}:([a-zA-Z0-9\(\)\+\,\.\:\=\@\;\$\_\!\*\-]|%[0-9a-fA-F]{2})*#",
+            $this->getDataContainer()->getId()
+        ) && !$this->_validateTagUri($this->getDataContainer()->getId())) {
             require_once 'Zend/Feed/Exception.php';
             throw new Zend_Feed_Exception('Atom 1.0 IDs must be a valid URI/IRI');
         }
@@ -290,6 +296,38 @@ class Zend_Feed_Writer_Renderer_Entry_Atom
         $root->appendChild($id);
         $text = $dom->createTextNode($this->getDataContainer()->getId());
         $id->appendChild($text);
+    }
+    
+    /**
+     * Validate a URI using the tag scheme (RFC 4151)
+     *
+     * @param string $id
+     * @return bool
+     */
+    protected function _validateTagUri($id)
+    {
+        if (preg_match('/^tag:(?<name>.*),(?<date>\d{4}-?\d{0,2}-?\d{0,2}):(?<specific>.*)(.*:)*$/', $id, $matches)) {
+            $dvalid = false;
+            $nvalid = false;
+            $date = $matches['date'];
+            $d6 = strtotime($date);
+            if ((strlen($date) == 4) && $date <= date('Y')) {
+                $dvalid = true;
+            } elseif ((strlen($date) == 7) && ($d6 < strtotime("now"))) {
+                $dvalid = true;
+            } elseif ((strlen($date) == 10) && ($d6 < strtotime("now"))) {
+                $dvalid = true;
+            }
+            $validator = new Zend_Validate_EmailAddress;
+            if ($validator->isValid($matches['name'])) {
+                $nvalid = true;
+            } else {
+                $nvalid = $validator->isValid('info@' . $matches['name']);
+            }
+            return $dvalid && $nvalid;
+
+        }
+        return false;
     }
     
     /**
@@ -337,7 +375,8 @@ class Zend_Feed_Writer_Renderer_Entry_Atom
             $tidy = new tidy;
             $config = array(
                 'output-xhtml' => true,
-                'show-body-only' => true
+                'show-body-only' => true,
+                'quote-nbsp' => false
             );
             $encoding = str_replace('-', '', $this->getEncoding());
             $tidy->parseString($content, $config, $encoding);

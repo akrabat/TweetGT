@@ -6,10 +6,17 @@ class IndexController extends Zend_Controller_Action
      * @var Zend_Session_Namespace
      */
     protected $_session;
-    
+
+    /**
+     * @var Application_Model_Twitter
+     */
+    protected $_twitter;
+
     public function init()
     {
         $this->_session = new Zend_Session_Namespace();
+
+        $this->_twitter = $this->getInvokeArg('twitter');
     }
 
     public function indexAction()
@@ -18,9 +25,9 @@ class IndexController extends Zend_Controller_Action
         $this->view->title = 'Send Tweet';
         $fc = $this->getFrontController();
 
-        if (isset($this->_session->accessToken)) {
-            $twitter = new Application_Model_Twitter($fc->getParam('oAuthConsumer'));
-            $this->view->name = $this->_session->name;
+        if (isset($this->_twitter)) {
+            
+            $this->view->name = $this->_twitter->getName();
             
             $config = $fc->getParam('bootstrap')->getOptions();
             $this->view->mapApiKey = $config['map']['apikey'];
@@ -65,12 +72,16 @@ class IndexController extends Zend_Controller_Action
 
     public function loginAction()
     {
-        if (!isset($this->_session->accessToken)) {
+        if (isset($this->_session->accessToken)) {
+            // clear sessions and redirect back here
+            $this->_session->unsetAll();
+            $this->_helper->redirector('login');
+        } else {
             $consumer = $this->getFrontController()->getParam('oAuthConsumer');
             $token = $consumer->getRequestToken();
             
             $this->_session->requestToken = $token;
-            $consumer->redirect();
+            $consumer->redirect(); // redirect to Twitter
         }
     }
 }

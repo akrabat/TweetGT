@@ -17,18 +17,18 @@ class App_Controller_Plugin_InitOAuth extends Zend_Controller_Plugin_Abstract
         if (isset($session->accessToken)) {
             $token = $session->accessToken;
             
-            if (!isset($session->name)) {
-                $config = array();
-                $config['username'] = $token->screen_name;
-                $config['accessToken'] = $token;
-                $config['consumerKey'] = $options['twitter']['consumerKey'];
-                $config['consumerSecret'] = $options['twitter']['consumerSecret'];
-                $config['callbackUrl'] = $url . '/callback';
+            $config = array();
+            $config['username'] = $token->screen_name;
+            $config['accessToken'] = $token;
+            $config['consumerKey'] = $options['twitter']['consumerKey'];
+            $config['consumerSecret'] = $options['twitter']['consumerSecret'];
+            $config['callbackUrl'] = $url . '/callback';
 
-                $twitter = new Application_Model_Twitter($options);
-                $session->name = (string)$twitter->getName();
 
-            }
+            $twitter = new Application_Model_Twitter($config);
+            $fc->setParam('twitter', $twitter);
+            $fc->getDispatcher()->setParams($fc->getParams()); // sync for use in controllers
+            
         } else {
 
             $configuration = array(

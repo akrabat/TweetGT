@@ -3,20 +3,20 @@
 class Application_Model_Twitter
 {
     /**
-     * @var Zend_Oauth_Consumer
+     * @var array
      */
-    protected $_oAuthConsumer;
+    protected $_options;
     
     /**
      * 
-     * @var Application_Service_Twitter
+     * @var App_Service_Twitter
      */
     protected $_service;
     
     
-    public function __construct(Zend_Oauth_Consumer $oAuthConsumer)
+    public function __construct($options)
     {
-        $this->_oAuthConsumer = $oAuthConsumer;
+        $this->_options = $options;
     }
     
     public function getName()
@@ -42,9 +42,11 @@ class Application_Model_Twitter
      */
     public function getService()
     {
-        if(!$this->_service) {
-            $this->_service= new Application_Service_Twitter();
-        }
+        //if(!$this->_service) {
+            $this->_service = new Zend_Service_Twitter($this->_options);
+        //}
+        //LDBG($this->_service->accountVerifyCredentials());exit;
+
         return $this->_service;
     }
     

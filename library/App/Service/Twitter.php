@@ -1,6 +1,6 @@
 <?php
 
-class Application_Service_Twitter extends Zend_Service_Twitter
+class App_Service_Twitter extends Zend_Service_Twitter
 {
     /**
      * Update user's current status

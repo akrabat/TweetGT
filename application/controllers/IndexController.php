@@ -15,8 +15,30 @@ class IndexController extends Zend_Controller_Action
     public function init()
     {
         $this->_session = new Zend_Session_Namespace();
+        $this->_twitter = $this->_helper->twitter();
+//
+//
+//        if (isset($this->_session->accessToken)) {
+//            // we have authenticated with Twitter, so create an instance
+//            // of our model (Application_Model_Twitter). Note that we need
+//            // to pass in the same parameters as we did to create the
+//            // consumer
+//
+//            $options = $this->getInvokeArg('bootstrap')->getOptions();
+//            $request = $this->getRequest();
+//            $token = $session->accessToken;
+//            $url = $request->getScheme() . '://' .  $request->getHttpHost() . $request->getBaseUrl();
+//
+//            $config = array();
+//            $config['username'] = $token->screen_name;
+//            $config['accessToken'] = $token;
+//            $config['consumerKey'] = $options['twitter']['consumerKey'];
+//            $config['consumerSecret'] = $options['twitter']['consumerSecret'];
+//            $config['callbackUrl'] = $url . '/callback';
+//
+//            $this->_twitter = new Application_Model_Twitter($config);
+//        }
 
-        $this->_twitter = $this->getInvokeArg('twitter');
     }
 
     public function indexAction()
@@ -25,7 +47,7 @@ class IndexController extends Zend_Controller_Action
         $this->view->title = 'Send Tweet';
         $fc = $this->getFrontController();
 
-        if (isset($this->_twitter)) {
+        if ($this->_twitter->isLoggedIn()) {
             
             $this->view->name = $this->_twitter->getName();
 
@@ -52,7 +74,6 @@ class IndexController extends Zend_Controller_Action
                     
                     try {
                         $result = $this->_twitter->send($tweet, $latitude, $longitude);
-                        /* @var $result Zend_Rest_Client_Result */
                         if ($result->isSuccess()) {
                             $message = 'Tweet sent';
                         } else {
@@ -79,12 +100,38 @@ class IndexController extends Zend_Controller_Action
 
     public function loginAction()
     {
+        $this->_session->requestToken = $this->_twitter->getRequestToken();
+        $this->_twitter->loginViaTwitterSite();
+
+
         if (isset($this->_session->accessToken)) {
             // clear sessions and redirect back here
             $this->_session->unsetAll();
             $this->_helper->redirector('login');
         } else {
-            $consumer = $this->getFrontController()->getParam('oAuthConsumer');
+            // utilise the OAuth consumer within the Twitter model to redirect
+            $twitter = $this->_helper->twitter();
+            $twitter->loginViaTwitterSite(); // redirect to Twitter
+
+
+            $options = $this->getInvokeArg('bootstrap')->getOptions();
+            $request = $this->getRequest();
+            $token = $session->accessToken;
+            $url = $request->getScheme() . '://' .  $request->getHttpHost() . $request->getBaseUrl();
+            
+            $configuration = array(
+                'version' => '1.0',
+                'requestScheme' => Zend_Oauth::REQUEST_SCHEME_HEADER,
+                'signatureMethod' => 'HMAC-SHA1',
+                'callbackUrl' => $url . '/callback',
+                'requestTokenUrl' => 'http://twitter.com/oauth/request_token',
+                'authorizeUrl' => 'http://twitter.com/oauth/authorize',
+                'accessTokenUrl' => 'http://twitter.com/oauth/access_token',
+                'consumerKey' => $options['twitter']['consumerKey'],
+                'consumerSecret' => $options['twitter']['consumerSecret']
+            );
+
+            $consumer = new Zend_Oauth_Consumer($configuration);
             $token = $consumer->getRequestToken();
             
             $this->_session->requestToken = $token;

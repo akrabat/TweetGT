@@ -8,7 +8,6 @@ class Application_Model_Twitter
     protected $_options;
     
     /**
-     * 
      * @var App_Service_Twitter
      */
     protected $_service;
@@ -18,7 +17,47 @@ class Application_Model_Twitter
     {
         $this->_options = $options;
     }
-    
+
+    public function isLoggedIn()
+    {
+        return $this->getService()->isAuthorised();
+    }
+
+    public function getRequestToken()
+    {
+        $service = $this->getService();
+        return $service->getRequestToken();
+    }
+
+    public function loginViaTwitterSite()
+    {
+        $service = $this->getService();
+        $service->redirect(); // redirect to Twitter
+    }
+
+    /**
+     * Retrieve an Access Token in exchange for a previously received/authorized
+     * Request Token.
+     *
+     * @param  array $queryData GET data returned in user's redirect from Provider
+     * @param  Zend_Oauth_Token_Request Request Token information
+     * 
+     * @return Zend_Oauth_Token_Access
+     * @throws Zend_Oauth_Exception on invalid authorization token, non-matching response authorization token, or unprovided authorization token
+     */
+    public function getAccessToken($queryData, Zend_Oauth_Token_Request $token)
+    {
+        $service = $this->getService();
+        $token = $service->getAccessToken($queryData, $token);
+        
+        return $token;
+    }
+
+    /**
+     * Retreive the user's name
+     *
+     * @return string
+     */
     public function getName()
     {
         try {
@@ -30,6 +69,14 @@ class Application_Model_Twitter
         return $name;
     }
     
+    /**
+     * Send a message with position
+     *
+     * @param string $message
+     * @param string $latitude
+     * @param string $longitude
+     * @return Zend_Rest_Client_Result
+     */
     public function send($message, $latitude, $longitude)
     {
         $response = $this->getService()->status->updateWithPosition($message, $latitude, $longitude);

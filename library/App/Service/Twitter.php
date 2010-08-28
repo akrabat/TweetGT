@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Simple extension of Zend_Service_Twitter to allow status updates with
+ * position (latitude,longitude)
+ */
 class App_Service_Twitter extends Zend_Service_Twitter
 {
     /**

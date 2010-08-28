@@ -28,14 +28,16 @@ class IndexController extends Zend_Controller_Action
         if (isset($this->_twitter)) {
             
             $this->view->name = $this->_twitter->getName();
-            
+
+            // Google map
             $config = $fc->getParam('bootstrap')->getOptions();
             $this->view->mapApiKey = $config['map']['apikey'];
             $coords = $config['map']['initial'];
             if(isset($_COOKIE['position'])) {
                 $coords = unserialize($_COOKIE['position']);
             }
-            
+
+            // Form to do tweeting with position
             $form = new Application_Form_Tweet();
             $form->setDefaults(array('latitude'=>$coords['latitude'], 'longitude'=>$coords['longitude']));
             $form->setAction($this->view->url(array(), null, true));
@@ -49,8 +51,13 @@ class IndexController extends Zend_Controller_Action
                     setcookie("position", serialize(array('latitude'=>$latitude, 'longitude'=>$longitude)), time()+7776000);  // expire in 90 days
                     
                     try {
-                        $result = $twitter->send($tweet, $latitude, $longitude);
-                        $message = 'Tweet sent';
+                        $result = $this->_twitter->send($tweet, $latitude, $longitude);
+                        /* @var $result Zend_Rest_Client_Result */
+                        if ($result->isSuccess()) {
+                            $message = 'Tweet sent';
+                        } else {
+                            $message = 'Failed to send tweet.';
+                        }
                     } catch (Exception $e){
                         $message = 'Failed to send tweet. Reported error: ' . $e->getMessage();
                     }
@@ -85,8 +92,3 @@ class IndexController extends Zend_Controller_Action
         }
     }
 }
-
-
-
-
-

@@ -3,9 +3,11 @@
 class App_Service_Twitter extends Zend_Service_Twitter
 {
     /**
-     * Update user's current status
+     * Update user's current status including his/her position
      *
      * @param  string $status
+     * @param  string $latitude
+     * @param  string $longitude
      * @param  int $in_reply_to_status_id
      * @return Zend_Rest_Client_Result
      * @throws Zend_Http_Client_Exception if HTTP request fails or times out

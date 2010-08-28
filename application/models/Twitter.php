@@ -42,10 +42,9 @@ class Application_Model_Twitter
      */
     public function getService()
     {
-        //if(!$this->_service) {
-            $this->_service = new Zend_Service_Twitter($this->_options);
-        //}
-        //LDBG($this->_service->accountVerifyCredentials());exit;
+        if(!$this->_service) {
+            $this->_service = new App_Service_Twitter($this->_options);
+        }
 
         return $this->_service;
     }

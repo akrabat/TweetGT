@@ -11,7 +11,7 @@ class CallbackController extends Zend_Controller_Action
         $session = new Zend_Session_Namespace();
         if (!empty($_GET) && isset($session->requestToken)) {
 
-            // Get the model from the action helper
+            // Get the model instance from the action helper
             $twitter = $this->_helper->twitter(); /* @var $twitter Application_Model_Twitter */
 
             // turn the request token into an access token

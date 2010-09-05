@@ -37,4 +37,3 @@ class Application_Controller_Helper_Twitter extends Zend_Controller_Action_Helpe
 
 }
 
-?>

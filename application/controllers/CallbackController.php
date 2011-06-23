@@ -9,13 +9,14 @@ class CallbackController extends Zend_Controller_Action
     public function indexAction()
     {
         $session = new Zend_Session_Namespace();
-        if (!empty($this->getRequest()->getQuery()) && isset($session->requestToken)) {
+        $query = $this->getRequest()->getQuery();
+        if (!empty($query) && isset($session->requestToken)) {
 
             // Get the model instance from the action helper
             $twitter = $this->_helper->twitter(); /* @var $twitter Application_Model_Twitter */
 
             // turn the request token into an access token
-            $accessToken = $twitter->getAccessToken($this->getRequest()->getQuery(), $session->requestToken);
+            $accessToken = $twitter->getAccessToken($query, $session->requestToken);
 
             // store the access token
             $session->accessToken = $accessToken;
